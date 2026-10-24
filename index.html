@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mokhichekhra · Machine learning portfolio</title>
+  <meta name="description" content="Mokhichekhra — a machine learning portfolio of practical projects: exploring data, training models and evaluating results honestly.">
+  <!-- The page follows the device setting: morning (light) = sand, night (dark) = wine -->
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#E5D2C2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#2A0A14" media="(prefers-color-scheme: dark)">
+
+  <!-- Fonts from Google Fonts with display=swap: text shows immediately in the
+       fallback fonts set in styles.css and switches when the web fonts arrive. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="wordmark" href="#home">Mokhichekhra</a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="https://github.com/mokhivibes" rel="noopener">GitHub <span aria-hidden="true">↗</span></a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- Hero -->
+    <section class="hero" id="home" aria-labelledby="hero-title">
+      <div class="container hero__inner">
+        <div class="hero__text stack" style="--stack-space: var(--space-m)">
+          <p class="label">Machine learning portfolio</p>
+          <h1 id="hero-title" class="display">Building machine learning, <em>one model at a time.</em></h1>
+          <p class="lead">A collection of practical machine learning projects. Each one starts with exploring the data, moves through training and comparing models, and ends with an honest look at how well the result really works.</p>
+          <div class="cluster">
+            <a class="button" href="#projects">Explore projects</a>
+            <a class="button button--secondary" href="https://github.com/mokhivibes" rel="noopener">View GitHub <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+
+        <aside class="hero__index" aria-label="Project index">
+          <p class="label">Index</p>
+          <ol class="index-list">
+            <li><span class="index-list__num">01</span><span class="index-list__name">House Price Prediction</span><span class="index-list__meta">Regression · Featured</span></li>
+            <li><span class="index-list__num">02</span><span class="index-list__name">Ill or healthy</span><span class="index-list__meta">Classification · In progress</span></li>
+            <li><span class="index-list__num">03</span><span class="index-list__name">Which of the groups</span><span class="index-list__meta">Multiclass · Planned</span></li>
+          </ol>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section class="section section--ruled" id="projects" aria-labelledby="projects-title">
+      <div class="container">
+        <header class="section-head">
+          <p class="label">Projects</p>
+          <h2 id="projects-title">Selected work</h2>
+        </header>
+
+        <!-- Featured project -->
+        <article class="feature" aria-labelledby="feature-title">
+          <div class="feature__text stack">
+            <p class="label">01 · Featured · Regression</p>
+            <h3 id="feature-title" class="feature__title">House Price Prediction</h3>
+            <p>A regression model that predicts the sale price of a house from its property features, such as overall quality, living area, basement size, lot size, year built, garage size and neighborhood.</p>
+            <p class="muted">Trained on the Ames, Iowa housing data and scored once on houses the model never saw during training.</p>
+            <p class="cluster"><a class="button" href="house-price.html">Read the case study</a> <a class="button button--secondary" href="https://github.com/mokhivibes/house-price-prediction" rel="noopener">View repository <span aria-hidden="true">↗</span></a></p>
+          </div>
+
+          <dl class="specs">
+            <div class="specs__row"><dt>Dataset</dt><dd>Ames, Iowa housing data</dd></div>
+            <div class="specs__row"><dt>Model</dt><dd>CatBoost</dd></div>
+            <div class="specs__row"><dt>R²</dt><dd class="specs__figure">0.922</dd></div>
+            <div class="specs__row"><dt>Typical error</dt><dd class="specs__figure">≈ $15,000</dd></div>
+            <div class="specs__row"><dt>Inputs</dt><dd>77&nbsp;model&nbsp;inputs · 10&nbsp;adjustable&nbsp;in&nbsp;app</dd></div>
+          </dl>
+        </article>
+
+        <!-- Other projects -->
+        <h3 class="subhead">Also in the works</h3>
+        <ul class="project-list" role="list">
+          <li class="project">
+            <p class="label">02 · Classification</p>
+            <h4 class="project__title">Ill or healthy</h4>
+            <p class="muted">A yes-or-no classifier.</p>
+            <p class="status">In progress</p>
+          </li>
+          <li class="project">
+            <p class="label">03 · Multiclass</p>
+            <h4 class="project__title">Which of the groups</h4>
+            <p class="muted">A classifier that sorts examples into several groups.</p>
+            <p class="status">Planned</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Approach -->
+    <section class="section section--ruled" id="approach" aria-labelledby="approach-title">
+      <div class="container">
+        <header class="section-head">
+          <p class="label">Approach</p>
+          <h2 id="approach-title">How each project is <em>built</em></h2>
+        </header>
+        <ol class="steps" role="list">
+          <li class="step">
+            <span class="step__num" aria-hidden="true">01</span>
+            <h3 class="step__title">Explore the data</h3>
+            <p class="muted">Look at distributions, missing values and odd records before deciding what to clean.</p>
+          </li>
+          <li class="step">
+            <span class="step__num" aria-hidden="true">02</span>
+            <h3 class="step__title">Build a baseline</h3>
+            <p class="muted">Start with a simple model, so every later improvement has something to beat.</p>
+          </li>
+          <li class="step">
+            <span class="step__num" aria-hidden="true">03</span>
+            <h3 class="step__title">Evaluate honestly</h3>
+            <p class="muted">Use cross-validation, keep a test set aside, and report errors in plain terms.</p>
+          </li>
+          <li class="step">
+            <span class="step__num" aria-hidden="true">04</span>
+            <h3 class="step__title">Improve the model</h3>
+            <p class="muted">Compare stronger models and tune them, keeping a change only when it clearly helps.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="section section--ruled" id="about" aria-labelledby="about-title">
+      <div class="container about">
+        <header class="section-head">
+          <p class="label">About</p>
+          <h2 id="about-title">About this portfolio</h2>
+        </header>
+        <div class="about__text stack">
+          <p class="lead">This portfolio is about practical machine learning: real datasets, clear questions and models that are measured carefully rather than presented as magic.</p>
+          <p>Each project is documented from the first look at the data to the final evaluation, including the limits of what the model can do. The code for each project is on <a href="https://github.com/mokhivibes" rel="noopener">GitHub</a>.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <p><span class="wordmark wordmark--small">Mokhichekhra</span> <span class="muted">· Machine learning portfolio</span></p>
+      <p><a href="https://github.com/mokhivibes" rel="noopener">github.com/mokhivibes <span aria-hidden="true">↗</span></a></p>
+    </div>
+  </footer>
+</body>
+</html>

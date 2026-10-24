@@ -1,0 +1,111 @@
+{
+ "test": {
+  "source": "recomputed with the saved model; matches notebook 09 cell 7",
+  "n_houses": 292,
+  "catboost": {
+   "mae": 15021.77,
+   "rmse": 24407.49,
+   "r2": 0.92233
+  },
+  "median_absolute_error": 9342.97,
+  "share_within_10000": 0.5205,
+  "share_within_20000": 0.774,
+  "mean_sale_price": 178839.81
+ },
+ "test_baseline": {
+  "source": "recorded output of notebook 09 cell 8 (not recomputed: needs fitting a model)",
+  "model": "Linear Regression",
+  "mae": 17826.38,
+  "rmse": 27945.85,
+  "r2": 0.89818
+ },
+ "cross_validation": {
+  "source": "recorded output of notebook 09 cells 2, 3 and 5 (not recomputed: needs fitting models)",
+  "method": "5-fold cross-validation on the 1166 training houses; spread = std of fold MAE",
+  "models": [
+   {
+    "model": "CatBoost",
+    "mae": 14438,
+    "spread": 854,
+    "rmse": 23436,
+    "r2": 0.908
+   },
+   {
+    "model": "LightGBM",
+    "mae": 14699,
+    "spread": 893,
+    "rmse": 23377,
+    "r2": 0.908
+   },
+   {
+    "model": "XGBoost",
+    "mae": 14781,
+    "spread": 328,
+    "rmse": 23093,
+    "r2": 0.91
+   },
+   {
+    "model": "Gradient Boosting",
+    "mae": 15227,
+    "spread": 780,
+    "rmse": 23783,
+    "r2": 0.904
+   },
+   {
+    "model": "Random Forest",
+    "mae": 16583,
+    "spread": 1416,
+    "rmse": 26331,
+    "r2": 0.883
+   },
+   {
+    "model": "Linear Regression",
+    "mae": 17207,
+    "spread": 613,
+    "rmse": 25396,
+    "r2": 0.89
+   }
+  ],
+  "stack_not_chosen": {
+   "model": "Stack (CatBoost + LightGBM + XGBoost, RidgeCV)",
+   "mae": 14345,
+   "spread": 506,
+   "rmse": 22628,
+   "r2": 0.913
+  }
+ },
+ "cleaning_experiments": {
+  "source": "recorded output of notebook 05 cell 10 (not recomputed: needs fitting models)",
+  "method": "Linear Regression, 5-fold cross-validation on the training set",
+  "experiments": [
+   {
+    "experiment": "Baseline (all data)",
+    "mae": 20457.218,
+    "rmse": 37870.799,
+    "r2": 0.756,
+    "worst_fold_r2": 0.647
+   },
+   {
+    "experiment": "Drop PoolArea",
+    "mae": 20355.142,
+    "rmse": 35325.681,
+    "r2": 0.786,
+    "worst_fold_r2": 0.651
+   },
+   {
+    "experiment": "Drop houses 523 and 1298",
+    "mae": 18228.851,
+    "rmse": 34329.482,
+    "r2": 0.716,
+    "worst_fold_r2": -0.011
+   },
+   {
+    "experiment": "Drop both",
+    "mae": 17207.464,
+    "rmse": 25395.886,
+    "r2": 0.89,
+    "worst_fold_r2": 0.855
+   }
+  ]
+ }
+}

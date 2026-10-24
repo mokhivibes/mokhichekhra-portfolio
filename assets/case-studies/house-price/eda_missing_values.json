@@ -1,0 +1,153 @@
+{
+ "source": "notebook 02, whole dataset (1460 houses)",
+ "n_houses": 1460,
+ "columns": [
+  {
+   "column": "PoolQC",
+   "missing_count": 1453,
+   "missing_pct": 99.521,
+   "partner_column": "PoolArea",
+   "blank_rows_where_partner_is_0": 1453,
+   "blank_means_none": true
+  },
+  {
+   "column": "MiscFeature",
+   "missing_count": 1406,
+   "missing_pct": 96.301,
+   "partner_column": "MiscVal",
+   "blank_rows_where_partner_is_0": 1406,
+   "blank_means_none": true
+  },
+  {
+   "column": "Alley",
+   "missing_count": 1369,
+   "missing_pct": 93.767,
+   "partner_column": null,
+   "blank_means_none": null
+  },
+  {
+   "column": "Fence",
+   "missing_count": 1179,
+   "missing_pct": 80.753,
+   "partner_column": null,
+   "blank_means_none": null
+  },
+  {
+   "column": "MasVnrType",
+   "missing_count": 872,
+   "missing_pct": 59.726,
+   "partner_column": "MasVnrArea",
+   "blank_rows_where_partner_is_0": 859,
+   "blank_means_none": false
+  },
+  {
+   "column": "FireplaceQu",
+   "missing_count": 690,
+   "missing_pct": 47.26,
+   "partner_column": "Fireplaces",
+   "blank_rows_where_partner_is_0": 690,
+   "blank_means_none": true
+  },
+  {
+   "column": "LotFrontage",
+   "missing_count": 259,
+   "missing_pct": 17.74,
+   "partner_column": null,
+   "blank_means_none": null
+  },
+  {
+   "column": "GarageYrBlt",
+   "missing_count": 81,
+   "missing_pct": 5.548,
+   "partner_column": "GarageArea",
+   "blank_rows_where_partner_is_0": 81,
+   "blank_means_none": true
+  },
+  {
+   "column": "GarageCond",
+   "missing_count": 81,
+   "missing_pct": 5.548,
+   "partner_column": "GarageArea",
+   "blank_rows_where_partner_is_0": 81,
+   "blank_means_none": true
+  },
+  {
+   "column": "GarageType",
+   "missing_count": 81,
+   "missing_pct": 5.548,
+   "partner_column": "GarageArea",
+   "blank_rows_where_partner_is_0": 81,
+   "blank_means_none": true
+  },
+  {
+   "column": "GarageFinish",
+   "missing_count": 81,
+   "missing_pct": 5.548,
+   "partner_column": "GarageArea",
+   "blank_rows_where_partner_is_0": 81,
+   "blank_means_none": true
+  },
+  {
+   "column": "GarageQual",
+   "missing_count": 81,
+   "missing_pct": 5.548,
+   "partner_column": "GarageArea",
+   "blank_rows_where_partner_is_0": 81,
+   "blank_means_none": true
+  },
+  {
+   "column": "BsmtFinType2",
+   "missing_count": 38,
+   "missing_pct": 2.603,
+   "partner_column": "TotalBsmtSF",
+   "blank_rows_where_partner_is_0": 37,
+   "blank_means_none": false
+  },
+  {
+   "column": "BsmtExposure",
+   "missing_count": 38,
+   "missing_pct": 2.603,
+   "partner_column": "TotalBsmtSF",
+   "blank_rows_where_partner_is_0": 37,
+   "blank_means_none": false
+  },
+  {
+   "column": "BsmtQual",
+   "missing_count": 37,
+   "missing_pct": 2.534,
+   "partner_column": "TotalBsmtSF",
+   "blank_rows_where_partner_is_0": 37,
+   "blank_means_none": true
+  },
+  {
+   "column": "BsmtCond",
+   "missing_count": 37,
+   "missing_pct": 2.534,
+   "partner_column": "TotalBsmtSF",
+   "blank_rows_where_partner_is_0": 37,
+   "blank_means_none": true
+  },
+  {
+   "column": "BsmtFinType1",
+   "missing_count": 37,
+   "missing_pct": 2.534,
+   "partner_column": "TotalBsmtSF",
+   "blank_rows_where_partner_is_0": 37,
+   "blank_means_none": true
+  },
+  {
+   "column": "MasVnrArea",
+   "missing_count": 8,
+   "missing_pct": 0.548,
+   "partner_column": null,
+   "blank_means_none": null
+  },
+  {
+   "column": "Electrical",
+   "missing_count": 1,
+   "missing_pct": 0.068,
+   "partner_column": null,
+   "blank_means_none": null
+  }
+ ]
+}

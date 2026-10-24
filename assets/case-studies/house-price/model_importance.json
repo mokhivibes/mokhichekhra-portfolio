@@ -1,0 +1,56 @@
+{
+ "source": "recomputed on the test set with the saved model; matches notebook 09",
+ "method": "permutation importance, 10 repeats, random_state=42, increase in MAE ($) when a column is shuffled",
+ "top": [
+  {
+   "column": "OverallQual",
+   "mae_increase": 11162.6,
+   "std": 619.4
+  },
+  {
+   "column": "GrLivArea",
+   "mae_increase": 8153.67,
+   "std": 553.99
+  },
+  {
+   "column": "BsmtFinSF1",
+   "mae_increase": 1985.1,
+   "std": 392.68
+  },
+  {
+   "column": "1stFlrSF",
+   "mae_increase": 1812.8,
+   "std": 249.88
+  },
+  {
+   "column": "TotalBsmtSF",
+   "mae_increase": 1452.77,
+   "std": 269.97
+  },
+  {
+   "column": "LotArea",
+   "mae_increase": 1370.51,
+   "std": 302.58
+  },
+  {
+   "column": "OverallCond",
+   "mae_increase": 1322.98,
+   "std": 126.44
+  },
+  {
+   "column": "YearBuilt",
+   "mae_increase": 1191.29,
+   "std": 175.64
+  },
+  {
+   "column": "GarageCars",
+   "mae_increase": 1100.13,
+   "std": 162.85
+  },
+  {
+   "column": "BsmtQual",
+   "mae_increase": 847.11,
+   "std": 156.39
+  }
+ ]
+}

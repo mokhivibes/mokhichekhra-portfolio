@@ -1,0 +1,1694 @@
+/* =========================================================================
+   Mokhichekhra — visual foundation
+   Tokens first, then reset, base elements, layout, components, utilities.
+   ========================================================================= */
+
+/* ---------- Brand colors ---------- */
+:root {
+  --color-burgundy: #5B172B;  /* deep burgundy */
+  --color-wine: #2A0A14;      /* dark wine */
+  --color-ivory: #F8F4EF;     /* warm ivory */
+  --color-rose: #C66F86;      /* dusty rose */
+  --color-sand: #E5D2C2;      /* warm sand */
+  --color-ink: #353039;       /* ink charcoal */
+}
+
+/* ---------- Design tokens ---------- */
+:root {
+  /* Color roles. The page follows the device's light/dark setting:
+       morning (light) = the sand surface, night (dark) = the wine surface.
+     Morning contrast on sand: ink 8.8:1, burgundy 8.9:1. Rose stays decorative
+     on light surfaces (3.2:1 on ivory), never body text. */
+  --surface: var(--color-sand);
+  --surface-alt: var(--color-ivory);
+  --text: var(--color-ink);
+  --text-strong: var(--color-burgundy);
+  --text-muted: rgba(53, 48, 57, 0.82);   /* ink at 82%: measured 5.6:1 on sand */
+  --accent: var(--color-burgundy);
+  --accent-soft: var(--color-rose);
+  --line: rgba(53, 48, 57, 0.2);
+  --line-strong: rgba(91, 23, 43, 0.45);
+  --focus: var(--color-burgundy);
+  --button-hover-bg: var(--color-wine);
+  --button-hover-text: var(--color-ivory);
+  --secondary-hover-bg: var(--color-burgundy);
+  --secondary-hover-text: var(--color-ivory);
+  --selection-bg: var(--color-ivory);
+
+  /* Fonts: the fallbacks are chosen so the page reads well before (or without) web fonts */
+  --font-serif: "Cormorant Garamond", "Cormorant", Garamond, "Iowan Old Style",
+                "Palatino Linotype", Palatino, Georgia, serif;
+  --font-sans: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas,
+               "Liberation Mono", monospace;
+
+  /* Fluid type scale (min at ~360px wide, max at ~1280px wide) */
+  --step--1: clamp(0.83rem, 0.80rem + 0.13vw, 0.90rem);   /* small print, labels */
+  --step-0:  clamp(1.00rem, 0.96rem + 0.20vw, 1.13rem);   /* body */
+  --step-1:  clamp(1.20rem, 1.12rem + 0.38vw, 1.41rem);   /* lead, h4 */
+  --step-2:  clamp(1.44rem, 1.29rem + 0.65vw, 1.83rem);   /* h3 */
+  --step-3:  clamp(1.73rem, 1.48rem + 1.08vw, 2.44rem);   /* h2 small */
+  --step-4:  clamp(2.07rem, 1.67rem + 1.72vw, 3.25rem);   /* h2 */
+  --step-5:  clamp(2.49rem, 1.86rem + 2.70vw, 4.33rem);   /* h1 */
+  --step-6:  clamp(2.99rem, 2.02rem + 4.15vw, 5.75rem);   /* display */
+
+  /* Spacing scale (4px base, roughly doubling) */
+  --space-3xs: 0.25rem;  /*  4px */
+  --space-2xs: 0.5rem;   /*  8px */
+  --space-xs: 0.75rem;   /* 12px */
+  --space-s: 1rem;       /* 16px */
+  --space-m: 1.5rem;     /* 24px */
+  --space-l: 2rem;       /* 32px */
+  --space-xl: 3rem;      /* 48px */
+  --space-2xl: 4rem;     /* 64px */
+  --space-3xl: 6rem;     /* 96px */
+  --section-gap: clamp(var(--space-2xl), 8vw, 8rem);   /* vertical rhythm between sections */
+
+  /* Layout */
+  --container: 72rem;           /* 1152px content width */
+  --container-narrow: 44rem;    /* ~70 characters for long reading */
+  --gutter: clamp(1rem, 4vw, 3.5rem);
+
+  /* Shape and lines: restrained, nearly square corners */
+  --radius: 2px;
+  --border: 1px solid var(--line);
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --duration: 180ms;
+}
+
+/* Wine surface (night). The same values are used in two places, so keep them in sync:
+   1. on the whole page when the device is in dark mode,
+   2. on any wrapper with .surface-dark (e.g. a hero band or footer in morning mode).
+   Contrast on wine: ivory 16.7:1, sand 12.4:1, rose 5.2:1 (fine for text here). */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: var(--color-wine);
+    --surface-alt: var(--color-burgundy);
+    --text: var(--color-ivory);
+    --text-strong: var(--color-ivory);
+    --text-muted: var(--color-sand);
+    --accent: var(--color-rose);
+    --accent-soft: var(--color-rose);
+    --line: rgba(229, 210, 194, 0.22);
+    --line-strong: rgba(198, 111, 134, 0.6);
+    --focus: var(--color-sand);
+    --button-hover-bg: var(--color-sand);
+    --button-hover-text: var(--color-wine);
+    --secondary-hover-bg: var(--color-rose);
+    --secondary-hover-text: var(--color-wine);
+    --selection-bg: var(--color-burgundy);
+  }
+}
+
+.surface-dark {
+  --surface: var(--color-wine);
+  --surface-alt: var(--color-burgundy);
+  --text: var(--color-ivory);
+  --text-strong: var(--color-ivory);
+  --text-muted: var(--color-sand);
+  --accent: var(--color-rose);
+  --accent-soft: var(--color-rose);
+  --line: rgba(229, 210, 194, 0.22);
+  --line-strong: rgba(198, 111, 134, 0.6);
+  --focus: var(--color-sand);
+  --button-hover-bg: var(--color-sand);
+  --button-hover-text: var(--color-wine);
+  --secondary-hover-bg: var(--color-rose);
+  --secondary-hover-text: var(--color-wine);
+  --selection-bg: var(--color-burgundy);
+  --border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+}
+
+/* Sand surface (morning). Carries the full light roles, so a sand panel stays
+   readable even when the page around it is in night mode. */
+.surface-sand {
+  --surface: var(--color-sand);
+  --surface-alt: var(--color-ivory);
+  --text: var(--color-ink);
+  --text-strong: var(--color-burgundy);
+  --text-muted: rgba(53, 48, 57, 0.82);
+  --accent: var(--color-burgundy);
+  --accent-soft: var(--color-rose);
+  --line: rgba(53, 48, 57, 0.2);
+  --line-strong: rgba(91, 23, 43, 0.45);
+  --focus: var(--color-burgundy);
+  --button-hover-bg: var(--color-wine);
+  --button-hover-text: var(--color-ivory);
+  --secondary-hover-bg: var(--color-burgundy);
+  --secondary-hover-text: var(--color-ivory);
+  --selection-bg: var(--color-ivory);
+  --border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+/* ---------- Base elements ---------- */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  line-height: 1.65;
+  font-kerning: normal;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  color: var(--text-strong);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--step-5); }
+h2 { font-size: var(--step-4); }
+h3 { font-size: var(--step-2); font-weight: 600; line-height: 1.2; }
+h4 { font-size: var(--step-1); font-weight: 600; line-height: 1.3; }
+
+p {
+  max-width: 68ch;
+  text-wrap: pretty;
+}
+
+em,
+.serif-italic {
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+strong {
+  font-weight: 700;
+}
+
+small {
+  font-size: var(--step--1);
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+hr {
+  border: 0;
+  border-top: var(--border);
+}
+
+::selection {
+  background: var(--selection-bg);
+  color: var(--text-strong);
+}
+
+/* Links: underlined, with a thin rose underline that thickens on hover */
+a {
+  color: var(--accent);
+  text-decoration-line: underline;
+  text-decoration-color: var(--accent-soft);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-thickness var(--duration) var(--ease),
+              color var(--duration) var(--ease);
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Keyboard focus: always visible, never removed */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: var(--radius);
+}
+
+/* ---------- Layout ---------- */
+.container {
+  width: min(100% - 2 * var(--gutter), var(--container));
+  margin-inline: auto;
+}
+
+.container--narrow {
+  width: min(100% - 2 * var(--gutter), var(--container-narrow));
+}
+
+.section {
+  padding-block: var(--section-gap);
+}
+
+/* Vertical rhythm for stacked content: .stack > * + * gets consistent space */
+.stack > * + * {
+  margin-top: var(--stack-space, var(--space-m));
+}
+
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  align-items: center;
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-l);
+  grid-template-columns: 1fr;
+}
+
+/* Tablet: 48rem / 768px */
+@media (min-width: 48rem) {
+  .grid--2,
+  .grid--3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Desktop: 64rem / 1024px */
+@media (min-width: 64rem) {
+  .grid--3 { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ---------- Components ---------- */
+
+/* Eyebrow / technical label: small monospace caps */
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.lead {
+  font-size: var(--step-1);
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.display {
+  font-size: var(--step-6);
+  line-height: 0.98;
+}
+
+/* Buttons: nearly square, one solid primary, one outlined secondary, one text-only */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  min-height: 2.75rem;            /* 44px tap target */
+  padding: 0.7rem 1.4rem;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--surface);
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--duration) var(--ease),
+              color var(--duration) var(--ease),
+              border-color var(--duration) var(--ease);
+}
+
+.button:hover {
+  background: var(--button-hover-bg);
+  border-color: var(--button-hover-bg);
+  color: var(--button-hover-text);
+}
+
+.button--secondary {
+  background: transparent;
+  color: var(--accent);
+}
+
+.button--secondary:hover {
+  background: var(--secondary-hover-bg);
+  border-color: var(--secondary-hover-bg);
+  color: var(--secondary-hover-text);
+}
+
+.button--text {
+  min-height: 2.75rem;
+  padding-inline: 0;
+  border-color: transparent;
+  background: transparent;
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: var(--accent-soft);
+  text-underline-offset: 0.25em;
+}
+
+.button--text:hover {
+  background: transparent;
+  border-color: transparent;
+  color: var(--accent);
+  text-decoration-thickness: 2px;
+}
+
+/* Fine divider: a single understated hairline in burgundy at low opacity */
+.rule {
+  border: 0;
+  border-top: 1px solid var(--line-strong);
+}
+
+/* Skip link: hidden until focused */
+.skip-link {
+  position: absolute;
+  left: var(--space-s);
+  top: var(--space-s);
+  z-index: 100;
+  padding: var(--space-2xs) var(--space-s);
+  background: var(--color-burgundy);
+  color: var(--color-ivory);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+  outline-color: var(--color-wine);
+}
+
+/* ---------- Utilities ---------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.muted { color: var(--text-muted); }
+.mono { font-family: var(--font-mono); }
+
+/* ---------- Reduced motion: no smooth scroll, no transitions ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* =========================================================================
+   Homepage
+   Structure comes from type, spacing and hairlines, not filled cards, so every
+   block reads the same on the sand (morning) and wine (night) surfaces.
+   ========================================================================= */
+
+/* In-page targets: leave a little room above a section when jumping to it */
+[id] {
+  scroll-margin-top: var(--space-l);
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  border-bottom: var(--border);
+}
+
+.site-header__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2xs) var(--space-l);
+  padding-block: var(--space-m);
+}
+
+.wordmark {
+  font-family: var(--font-serif);
+  font-size: var(--step-2);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+  color: var(--text-strong);
+  text-decoration: none;
+}
+
+.wordmark--small {
+  font-size: var(--step-1);
+}
+
+.site-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs) var(--space-l);
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav a {
+  display: inline-block;
+  padding-block: var(--space-xs);      /* 44px+ tap area without looking heavier */
+  color: var(--text);
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+}
+
+.site-nav a:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent-soft);
+}
+
+/* Phones: wordmark on its own line, links in a row underneath */
+@media (max-width: 39.99rem) {
+  .site-header__inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-nav ul {
+    gap: var(--space-2xs) var(--space-m);
+  }
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  padding-block: clamp(var(--space-2xl), 10vw, 9rem) var(--section-gap);
+}
+
+.hero__inner {
+  display: grid;
+  gap: var(--space-2xl);
+}
+
+.hero__text .display {
+  max-width: 17ch;
+}
+
+.hero__index .label {
+  margin-bottom: var(--space-s);
+}
+
+.index-list {
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line-strong);
+}
+
+.index-list li {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: 0 var(--space-xs);
+  padding-block: var(--space-s);
+  border-bottom: var(--border);
+}
+
+.index-list__num {
+  grid-row: span 2;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--accent);
+  padding-top: 0.2em;
+}
+
+.index-list__name {
+  font-family: var(--font-serif);
+  font-size: var(--step-1);
+  font-weight: 600;
+  color: var(--text-strong);
+  line-height: 1.25;
+}
+
+.index-list__meta {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+
+/* Phones and tablets: the index would sit right above the full project list
+   and repeat it, so show it only on desktop, where it sits beside the headline */
+@media (max-width: 63.99rem) {
+  .hero__index {
+    display: none;
+  }
+}
+
+@media (min-width: 64rem) {
+  .hero__inner {
+    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+    align-items: end;
+    gap: var(--space-3xl);
+  }
+}
+
+/* ---------- Sections ---------- */
+.section-head {
+  display: grid;
+  gap: var(--space-xs);
+  padding-top: var(--space-l);
+  margin-bottom: var(--space-2xl);
+  border-top: 1px solid var(--line-strong);
+}
+
+.section {
+  padding-block: 0 var(--section-gap);
+}
+
+.subhead {
+  font-size: var(--step-1);
+  margin: var(--space-3xl) 0 var(--space-l);
+}
+
+/* ---------- Featured project ---------- */
+.feature {
+  display: grid;
+  gap: var(--space-2xl);
+}
+
+.feature__title {
+  font-size: var(--step-4);
+  font-weight: 500;
+  line-height: 1.05;
+}
+
+.specs {
+  border-top: 1px solid var(--line-strong);
+}
+
+.specs__row {
+  display: grid;
+  grid-template-columns: minmax(7rem, 2fr) 3fr;
+  align-items: baseline;
+  gap: var(--space-s);
+  padding-block: var(--space-s);
+  border-bottom: var(--border);
+}
+
+.specs dt {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.specs dd {
+  margin: 0;
+  color: var(--text-strong);
+}
+
+.specs__figure {
+  font-family: var(--font-serif);
+  font-size: var(--step-3);
+  font-weight: 500;
+  line-height: 1;
+  font-variant-numeric: lining-nums;
+}
+
+@media (min-width: 64rem) {
+  .feature {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: var(--space-3xl);
+    align-items: start;
+  }
+}
+
+/* ---------- Other projects ---------- */
+.project-list {
+  display: grid;
+  gap: var(--space-xl) var(--space-2xl);
+  padding: 0;
+  list-style: none;
+}
+
+.project {
+  display: grid;
+  gap: var(--space-2xs);
+  align-content: start;
+  padding-top: var(--space-m);
+  border-top: var(--border);
+}
+
+.project__title {
+  font-size: var(--step-2);
+  font-weight: 500;
+}
+
+.status {
+  margin-top: var(--space-2xs);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--text);
+}
+
+.status::before {
+  content: "— ";
+  color: var(--accent);
+}
+
+@media (min-width: 48rem) {
+  .project-list { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---------- Approach ---------- */
+.steps {
+  display: grid;
+  gap: var(--space-xl) var(--space-l);
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: grid;
+  gap: var(--space-2xs);
+  align-content: start;
+  padding-top: var(--space-m);
+  border-top: var(--border);
+}
+
+.step__num {
+  font-family: var(--font-serif);
+  font-size: var(--step-3);
+  line-height: 1;
+  color: var(--accent);
+  font-variant-numeric: lining-nums;   /* Cormorant's default old-style "01" reads like "OI" */
+}
+
+.step__title {
+  font-size: var(--step-1);
+  font-weight: 600;
+}
+
+@media (min-width: 48rem) {
+  .steps { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 64rem) {
+  .steps { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ---------- About ---------- */
+@media (min-width: 64rem) {
+  .about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    gap: var(--space-3xl);
+  }
+
+  .about .section-head {
+    margin-bottom: 0;
+  }
+
+  .about__text {
+    padding-top: var(--space-l);
+    border-top: 1px solid var(--line-strong);
+  }
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+  border-top: var(--border);
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-xs) var(--space-l);
+  padding-block: var(--space-xl);
+  font-size: var(--step--1);
+}
+
+/* =========================================================================
+   Case study pages (house-price.html)
+   Reuses the homepage pieces (section-head, specs, buttons) and adds a few
+   layout blocks. Same rule as the homepage: hairlines and type first; the only
+   filled surfaces are .panel blocks on --surface-alt.
+   ========================================================================= */
+
+/* ---------- Hero ---------- */
+.case-hero {
+  padding-block: clamp(var(--space-xl), 7vw, 6rem) var(--section-gap);
+}
+
+.case-hero__back {
+  margin-bottom: clamp(var(--space-l), 5vw, var(--space-3xl));
+  font-size: var(--step--1);
+}
+
+.case-hero__back a {
+  display: inline-block;
+  padding-block: var(--space-xs);     /* 44px tap area */
+  color: var(--text);
+  text-decoration-color: transparent;
+}
+
+.case-hero__back a:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent-soft);
+}
+
+.case-hero__inner {
+  display: grid;
+  gap: var(--space-2xl);
+}
+
+.case-hero__text .display {
+  max-width: 14ch;
+}
+
+.case-hero__text .display em {
+  display: block;
+  color: var(--accent);
+}
+
+@media (min-width: 64rem) {
+  .case-hero__inner {
+    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+    align-items: end;
+    gap: var(--space-3xl);
+  }
+}
+
+/* ---------- Contents ---------- */
+.case-toc {
+  margin-top: clamp(var(--space-2xl), 7vw, var(--space-3xl));
+}
+
+.case-toc .label {
+  margin-bottom: var(--space-s);
+}
+
+.case-toc__list {
+  display: grid;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line-strong);
+}
+
+.case-toc__list a {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: baseline;
+  padding-block: var(--space-s);
+  border-bottom: var(--border);
+  color: var(--text);
+  font-weight: 500;
+  text-decoration-color: transparent;
+}
+
+.case-toc__list a:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent-soft);
+}
+
+.case-toc__num {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--accent);
+}
+
+@media (min-width: 48rem) {
+  .case-toc__list {
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: var(--space-l);
+  }
+}
+
+@media (min-width: 64rem) {
+  .case-toc__list {
+    grid-template-columns: repeat(5, 1fr);
+    border-top: 0;
+  }
+
+  .case-toc__list a {
+    flex-direction: column;
+    gap: var(--space-3xs);
+    height: 100%;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 0;
+  }
+}
+
+/* ---------- Section layout ---------- */
+.case-split {
+  display: grid;
+  gap: var(--space-2xl);
+  align-items: start;
+}
+
+@media (min-width: 64rem) {
+  .case-split {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: var(--space-3xl);
+  }
+
+  .case-split--even {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.case-note {
+  margin-top: var(--space-l);
+  font-size: var(--step--1);
+}
+
+.subhead--flush {
+  margin-top: 0;
+}
+
+/* ---------- Findings: a figure, a title and one sentence ---------- */
+.findings {
+  display: grid;
+  gap: var(--space-xl) var(--space-l);
+  padding: 0;
+  list-style: none;
+}
+
+.finding {
+  display: grid;
+  gap: var(--space-2xs);
+  align-content: start;
+  padding-top: var(--space-m);
+  border-top: 1px solid var(--line-strong);
+}
+
+.finding__figure {
+  font-family: var(--font-serif);
+  font-size: var(--step-4);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--text-strong);
+  font-variant-numeric: lining-nums;
+}
+
+.finding__vs {
+  font-size: 0.5em;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.finding__title {
+  margin-top: var(--space-2xs);
+}
+
+@media (min-width: 48rem) {
+  .findings { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ---------- Tables of recorded results ---------- */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--step--1);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.data-table caption {
+  margin-bottom: var(--space-s);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  text-align: left;
+  color: var(--text-muted);
+}
+
+.data-table th,
+.data-table td {
+  padding: var(--space-xs) var(--space-xs) var(--space-xs) 0;
+  border-bottom: var(--border);
+  text-align: left;
+  vertical-align: baseline;
+}
+
+.data-table th:last-child,
+.data-table td:last-child {
+  padding-right: 0;
+}
+
+.data-table thead th {
+  border-bottom: 1px solid var(--line-strong);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.data-table tbody th {
+  font-weight: 500;
+}
+
+.data-table .num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.data-table .is-chosen th,
+.data-table .is-chosen td {
+  color: var(--text-strong);
+  font-weight: 700;
+}
+
+.tag {
+  display: inline-block;
+  margin-left: var(--space-3xs);
+  padding: 0 0.4em;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  vertical-align: 0.1em;
+}
+
+@media (min-width: 48rem) {
+  .data-table { font-size: var(--step-0); }
+}
+
+/* ---------- Panels: the one layered surface ---------- */
+.panel {
+  --accent: var(--text-strong);       /* rose is too light for text on burgundy */
+  display: grid;
+  gap: var(--space-s);
+  align-content: start;
+  padding: clamp(var(--space-m), 4vw, var(--space-xl));
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-alt);
+}
+
+.panel--raised {
+  box-shadow: 0 1px 0 var(--line),
+              0 1.5rem 3rem -2rem rgba(42, 10, 20, 0.45);
+}
+
+.panel__title {
+  font-size: var(--step-2);
+  font-weight: 500;
+}
+
+.prep-grid {
+  display: grid;
+  gap: var(--space-l);
+}
+
+@media (min-width: 48rem) {
+  .prep-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.prep-steps,
+.takeaways {
+  display: grid;
+  gap: var(--space-xs);
+  padding: 0;
+  list-style: none;
+  counter-reset: item;
+}
+
+/* The number sits in the left margin, so items can mix bold and plain text */
+.prep-steps li,
+.takeaways li {
+  position: relative;
+  padding-left: 2.75rem;
+  counter-increment: item;
+}
+
+.prep-steps li::before,
+.takeaways li::before {
+  content: counter(item, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0.2em;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--accent);
+}
+
+.takeaways {
+  gap: var(--space-m);
+}
+
+/* ---------- Pipeline flow: vertical on phones and tablets, a row on desktop ---------- */
+.flow {
+  display: grid;
+  margin-bottom: var(--space-3xl);
+  padding: 0;
+  list-style: none;
+}
+
+.flow__step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  gap: 0 var(--space-m);
+  padding-block: var(--space-m);
+  border-top: var(--border);
+}
+
+.flow__step:first-child {
+  border-top: 1px solid var(--line-strong);
+}
+
+.flow__num {
+  grid-column: 2;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--accent);
+}
+
+.flow__figure {
+  grid-column: 1;
+  grid-row: 1 / span 3;
+  font-family: var(--font-serif);
+  font-size: var(--step-4);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--text-strong);
+  font-variant-numeric: lining-nums;
+}
+
+.flow__title,
+.flow__step .muted {
+  grid-column: 2;
+}
+
+.flow__title {
+  font-size: var(--step-1);
+}
+
+@media (min-width: 64rem) {
+  .flow {
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-l);
+  }
+
+  .flow__step {
+    grid-template-columns: 1fr;
+    align-content: start;
+    gap: var(--space-2xs);
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .flow__num,
+  .flow__figure,
+  .flow__title,
+  .flow__step .muted {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .flow__figure {
+    margin-block: var(--space-xs);
+  }
+
+  /* A short arrow on the hairline between steps */
+  .flow__step:not(:last-child)::after {
+    content: "→";
+    position: absolute;
+    top: calc(-0.7em - 1px);
+    right: calc(-1 * var(--space-l) / 2 - 0.5em);
+    padding-inline: 0.15em;
+    background: var(--surface);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    line-height: 1.4;
+    color: var(--accent);
+  }
+}
+
+/* ---------- Limitations ---------- */
+.limits {
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line-strong);
+}
+
+.limits li {
+  padding-block: var(--space-s);
+  padding-left: 1.5rem;
+  border-bottom: var(--border);
+  text-indent: -1.5rem;
+}
+
+.limits li::before {
+  content: "—";
+  display: inline-block;
+  width: 1.5rem;
+  text-indent: 0;
+  color: var(--accent);
+}
+
+/* ---------- Closing links ---------- */
+.case-end {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  margin-top: var(--space-3xl);
+  padding-top: var(--space-l);
+  border-top: 1px solid var(--line-strong);
+}
+
+/* ---------- Scroll reveals ----------
+   Content is visible by default. script.js adds .js-reveal to <html> only when
+   it can run the reveals, and the hidden start state also needs the visitor to
+   allow motion, so a script failure or reduced motion never hides anything. */
+@media (prefers-reduced-motion: no-preference) {
+  .js-reveal [data-reveal] {
+    opacity: 0;
+    transform: translateY(1.25rem);
+    transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
+                transform 900ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
+  }
+
+  .js-reveal [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media print {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* =========================================================================
+   Case-study charts (drawn by charts.js)
+   Marks use the theme roles, so every chart follows sand and wine. Emphasis is
+   the accent; the neutral was checked against it in both themes with the
+   palette validator: at least 3:1 on the surface, and clearly apart for
+   normal-vision and colour-blind readers. Charts that use it also carry a
+   legend, direct labels and a data table.
+   Sand: a cool grey, darker than the surface and lighter than burgundy.
+   Wine: a light grey; a neutral at rose's lightness is hard to tell from rose
+   for colour-blind readers, and a darker one would fall under 3:1.
+   ========================================================================= */
+.chart {
+  --chart-mark: var(--accent);
+  --chart-muted: #7A7480;
+  --chart-ink: var(--text-muted);
+  display: grid;
+  gap: var(--space-s);
+  align-content: start;
+  min-width: 0;
+  margin-top: var(--space-3xl);
+  padding-top: var(--space-m);
+  border-top: 1px solid var(--line-strong);
+}
+
+@media (prefers-color-scheme: dark) {
+  .chart { --chart-muted: #BEB5B8; }
+}
+
+.chart-grid {
+  display: grid;
+  gap: 0 var(--space-2xl);
+}
+
+@media (min-width: 64rem) {
+  .chart-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+
+.chart__head {
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.chart__title {
+  font-size: var(--step-2);
+  font-weight: 500;
+}
+
+.chart__desc {
+  color: var(--text-muted);
+}
+
+.chart__note,
+.chart__source,
+.tolerance__help {
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+
+.chart__source {
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
+/* The log note matters most while the log view is on */
+.chart.is-log .chart__note--log {
+  color: var(--text-strong);
+}
+
+/* ---------- Plot area ---------- */
+.chart__plot {
+  position: relative;
+  min-height: 8rem;
+  border-radius: var(--radius);
+  touch-action: pan-y;
+}
+
+.chart__plot svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  font-family: var(--font-sans);
+}
+
+.chart__status {
+  padding: var(--space-l) 0;
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+
+/* ---------- Controls ---------- */
+.chart__controls {
+  display: inline-flex;
+  justify-self: start;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+}
+
+.chart__toggle {
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: var(--step--1);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--duration) var(--ease), color var(--duration) var(--ease);
+}
+
+.chart__toggle + .chart__toggle {
+  border-left: 1px solid var(--line-strong);
+}
+
+.chart__toggle[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--surface);
+}
+
+.chart__toggle:not([aria-pressed="true"]):hover {
+  color: var(--accent);
+}
+
+/* ---------- Legend ---------- */
+.chart__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs) var(--space-l);
+  padding: 0;
+  list-style: none;
+  font-size: var(--step--1);
+  color: var(--text);
+}
+
+.chart__legend li {
+  display: flex;
+  gap: var(--space-2xs);
+  align-items: baseline;
+}
+
+.swatch {
+  flex: none;
+  width: 0.9rem;
+  height: 0.65rem;
+  border: 1.5px solid var(--chart-mark);
+  background: var(--chart-mark);
+}
+
+.swatch--outline {
+  background: color-mix(in srgb, var(--chart-mark) 16%, transparent);
+}
+
+.swatch--muted {
+  border-color: var(--chart-muted);
+  background: var(--chart-muted);
+}
+
+.swatch--dot,
+.swatch--ring {
+  width: 0.65rem;
+  border-radius: 50%;
+}
+
+.swatch--ring {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-width: 2px;
+  background: transparent;
+}
+
+/* ---------- SVG marks ---------- */
+.chart-gridlines line {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.chart-axis {
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+
+.chart-tick {
+  fill: var(--chart-ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-row-label {
+  fill: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.chart-value,
+.chart-annotation,
+.chart-marker__label {
+  fill: var(--text);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.chart-group-title {
+  fill: var(--text-strong);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.chart-bar {
+  fill: var(--chart-mark);
+}
+
+.chart-bar.is-muted {
+  fill: var(--chart-muted);
+}
+
+.chart-bar.is-outline {
+  fill: color-mix(in srgb, var(--chart-mark) 16%, transparent);
+  stroke: var(--chart-mark);
+  stroke-width: 1.5;
+}
+
+.chart-bar.is-active {
+  fill: var(--text-strong);
+  stroke: var(--text-strong);
+}
+
+.chart-whisker line {
+  stroke: var(--text);
+  stroke-width: 1.5;
+}
+
+.chart-marker line,
+.chart-limit,
+.chart-median {
+  stroke: var(--text);
+  stroke-width: 1.5;
+}
+
+.chart-zero {
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+
+.chart-point {
+  fill: var(--chart-mark);
+  fill-opacity: 0.55;
+  stroke: var(--surface);         /* thin surface ring keeps overlapping dots apart */
+  stroke-width: 1;
+}
+
+.chart-point.is-muted {
+  fill: var(--chart-muted);
+  fill-opacity: 0.9;              /* close to the validated colour, not washed into the surface */
+}
+
+.chart-point.is-flagged {
+  fill: var(--surface);
+  fill-opacity: 1;
+  stroke: var(--chart-mark);
+  stroke-width: 2.5;
+}
+
+.chart-point.is-outlier {
+  fill: var(--chart-mark);
+  fill-opacity: 0.85;
+  stroke-width: 1.5;
+}
+
+.chart-point.is-active {
+  fill: var(--text-strong);
+  fill-opacity: 1;
+  stroke: var(--surface);
+  stroke-width: 2;
+}
+
+.chart-box {
+  fill: color-mix(in srgb, var(--chart-mark) 18%, transparent);
+  stroke: var(--chart-mark);
+  stroke-width: 1.5;
+}
+
+.chart-box.is-active {
+  stroke-width: 2.5;
+}
+
+.chart-limit.is-active,
+.chart-median.is-active {
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.chart-reach {
+  stroke: var(--text);
+  stroke-width: 1;
+}
+
+.chart-band {
+  fill: color-mix(in srgb, var(--chart-mark) 12%, transparent);
+}
+
+.chart-diagonal {
+  stroke: var(--text);
+  stroke-width: 1.5;
+}
+
+/* ---------- Tooltip ---------- */
+.chart__tip {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  gap: 0.1rem;
+  max-width: min(18rem, 100%);
+  padding: var(--space-2xs) var(--space-xs);
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-alt);
+  box-shadow: 0 0.75rem 1.5rem -1rem rgba(42, 10, 20, 0.5);
+  color: var(--text);
+  font-size: var(--step--1);
+  line-height: 1.4;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 120ms var(--ease);
+}
+
+.chart__tip.is-visible {
+  opacity: 1;
+}
+
+.chart__tip strong {
+  color: var(--text-strong);
+}
+
+/* ---------- Data tables ---------- */
+.chart__data summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--accent);
+  font-size: var(--step--1);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.chart__data[open] summary {
+  margin-bottom: var(--space-xs);
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.table-scroll--tall {
+  max-height: 22rem;
+  overflow-y: auto;
+  border-bottom: var(--border);
+}
+
+.data-table--compact {
+  font-size: var(--step--1);
+}
+
+.data-table--compact th,
+.data-table--compact td {
+  padding-block: var(--space-2xs);
+}
+
+.table-scroll--tall thead th {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+}
+
+/* ---------- Tolerance control ---------- */
+.tolerance {
+  display: grid;
+  gap: var(--space-xs);
+  margin-top: var(--space-3xl);
+  padding: clamp(var(--space-m), 3vw, var(--space-l));
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-alt);
+  --accent: var(--text-strong);       /* same rule as .panel: rose is too light on burgundy */
+}
+
+.tolerance__head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs) var(--space-l);
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.tolerance__output {
+  font-family: var(--font-serif);
+  font-size: var(--step-2);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text-strong);
+}
+
+.tolerance__input {
+  width: 100%;
+  min-height: 2.75rem;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.tolerance + .chart-grid > .chart:first-child,
+.tolerance + .chart-grid > .chart {
+  margin-top: var(--space-2xl);
+}
+
+/* ---------- First-reveal motion (only when charts.js adds .chart--motion) ---------- */
+.chart--motion .chart-bar,
+.chart--motion .chart-point,
+.chart--motion .chart-whisker,
+.chart--motion .chart-diagonal,
+.chart--motion .chart-box,
+.chart--motion .chart-median,
+.chart--motion .chart-limit {
+  transform-box: fill-box;
+  transition: transform 720ms cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0ms),
+              opacity 480ms var(--ease) var(--d, 0ms),
+              fill var(--duration) var(--ease);
+}
+
+.chart--motion .chart-bar--v { transform-origin: 50% 100%; }
+.chart--motion .chart-bar--h { transform-origin: 0 50%; }
+.chart--motion .chart-point { transform-origin: 50% 50%; }
+
+.chart--motion .is-pending .chart-bar--v { transform: scaleY(0); }
+.chart--motion .is-pending .chart-bar--h { transform: scaleX(0); }
+.chart--motion .is-pending .chart-point { opacity: 0; transform: scale(0.4); }
+.chart--motion .is-pending .chart-whisker,
+.chart--motion .is-pending .chart-diagonal,
+.chart--motion .is-pending .chart-box,
+.chart--motion .is-pending .chart-median,
+.chart--motion .is-pending .chart-limit { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .chart--motion .is-pending * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+@media print {
+  .chart__tip { display: none; }
+  .chart .is-pending * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

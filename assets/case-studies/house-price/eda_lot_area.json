@@ -1,0 +1,54 @@
+{
+ "source": "notebook 03, training set before outlier removal",
+ "summary": {
+  "count": 1168.0,
+  "mean": 10689.64,
+  "std": 10759.37,
+  "min": 1300.0,
+  "25%": 7587.25,
+  "50%": 9600.0,
+  "75%": 11700.0,
+  "max": 215245.0
+ },
+ "q1": 7587.25,
+ "q3": 11700.0,
+ "upper_whisker_limit": 17869.125,
+ "n_above_whisker": 53,
+ "largest": [
+  {
+   "id": 313,
+   "lot_area": 215245,
+   "price": 375000,
+   "living_area": 2036,
+   "neighborhood": "Timber"
+  },
+  {
+   "id": 335,
+   "lot_area": 164660,
+   "price": 228950,
+   "living_area": 1786,
+   "neighborhood": "Timber"
+  },
+  {
+   "id": 249,
+   "lot_area": 159000,
+   "price": 277000,
+   "living_area": 2144,
+   "neighborhood": "ClearCr"
+  },
+  {
+   "id": 706,
+   "lot_area": 115149,
+   "price": 302000,
+   "living_area": 1824,
+   "neighborhood": "ClearCr"
+  },
+  {
+   "id": 1298,
+   "lot_area": 63887,
+   "price": 160000,
+   "living_area": 5642,
+   "neighborhood": "Edwards"
+  }
+ ]
+}

@@ -1,0 +1,46 @@
+{
+ "source": "notebook 03, training set before outlier removal",
+ "method": "Pearson correlation with SalePrice, numeric columns only",
+ "top": [
+  {
+   "column": "OverallQual",
+   "r": 0.7856
+  },
+  {
+   "column": "GrLivArea",
+   "r": 0.6957
+  },
+  {
+   "column": "GarageCars",
+   "r": 0.641
+  },
+  {
+   "column": "GarageArea",
+   "r": 0.6241
+  },
+  {
+   "column": "TotalBsmtSF",
+   "r": 0.5978
+  },
+  {
+   "column": "1stFlrSF",
+   "r": 0.5879
+  },
+  {
+   "column": "FullBath",
+   "r": 0.5525
+  },
+  {
+   "column": "TotRmsAbvGrd",
+   "r": 0.5204
+  },
+  {
+   "column": "YearBuilt",
+   "r": 0.5165
+  },
+  {
+   "column": "YearRemodAdd",
+   "r": 0.5086
+  }
+ ]
+}

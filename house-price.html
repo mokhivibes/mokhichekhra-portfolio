@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>House Price Prediction · Mokhichekhra</title>
+  <meta name="description" content="Case study: a CatBoost model that predicts house sale prices in Ames, Iowa, from data exploration and cleaning to an honest evaluation on unseen houses.">
+  <!-- Same theme setup as the homepage: morning (light) = sand, night (dark) = wine -->
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#E5D2C2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#2A0A14" media="(prefers-color-scheme: dark)">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+  <script src="charts.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="wordmark" href="index.html">Mokhichekhra</a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="index.html#home">Home</a></li>
+          <li><a href="index.html#projects" aria-current="true">Projects</a></li>
+          <li><a href="index.html#about">About</a></li>
+          <li><a href="https://github.com/mokhivibes" rel="noopener">GitHub <span aria-hidden="true">↗</span></a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- Hero -->
+    <section class="case-hero" id="overview" aria-labelledby="case-title">
+      <div class="container">
+        <p class="case-hero__back"><a href="index.html#projects"><span aria-hidden="true">←</span> All projects</a></p>
+
+        <div class="case-hero__inner">
+          <div class="case-hero__text stack" style="--stack-space: var(--space-m)">
+            <p class="label">Case study 01 · Regression</p>
+            <h1 id="case-title" class="display">House Price Prediction <em>in Ames, Iowa</em></h1>
+            <p class="lead">A CatBoost model that estimates what a house in Ames, Iowa sold for, from 77 details about the property. On 292 houses it never saw during training, its predictions were off by $15,022 on average.</p>
+            <div class="cluster">
+              <a class="button" href="#data">Read the case study</a>
+              <a class="button button--secondary" href="https://github.com/mokhivibes/house-price-prediction" rel="noopener">View repository <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+
+          <dl class="specs case-hero__specs" aria-label="Results on the test set">
+            <div class="specs__row"><dt>R² on test set</dt><dd class="specs__figure">0.922</dd></div>
+            <div class="specs__row"><dt>Mean absolute error</dt><dd class="specs__figure">$15,022</dd></div>
+            <div class="specs__row"><dt>Test houses</dt><dd class="specs__figure">292</dd></div>
+            <div class="specs__row"><dt>Model</dt><dd>CatBoost, default settings</dd></div>
+          </dl>
+        </div>
+
+        <nav class="case-toc" aria-label="Case study sections">
+          <p class="label">Contents</p>
+          <ol class="case-toc__list" role="list">
+            <li><a href="#data"><span class="case-toc__num">01</span> The data</a></li>
+            <li><a href="#preparation"><span class="case-toc__num">02</span> Cleaning and preprocessing</a></li>
+            <li><a href="#model"><span class="case-toc__num">03</span> The CatBoost pipeline</a></li>
+            <li><a href="#evaluation"><span class="case-toc__num">04</span> Evaluation</a></li>
+            <li><a href="#takeaways"><span class="case-toc__num">05</span> Limits and takeaways</a></li>
+          </ol>
+        </nav>
+      </div>
+    </section>
+
+    <!-- 01 · Dataset and EDA -->
+    <section class="section case-section" id="data" aria-labelledby="data-title">
+      <div class="container">
+        <header class="section-head" data-reveal>
+          <p class="label">01 · Dataset and exploration</p>
+          <h2 id="data-title">Understanding <em>the data</em></h2>
+        </header>
+
+        <div class="case-split">
+          <div class="case-prose stack" data-reveal>
+            <p class="lead">The dataset records 1,460 house sales in Ames, Iowa, between 2006 and 2010. Each sale has 81 columns: an ID, the sale price and 79 details about the property, from overall quality and living area to the garage, basement and neighborhood.</p>
+            <p>Before exploring, 20% of the houses (292) were set aside as a test set. The price and feature exploration, and every cleaning decision, used only the remaining 1,168 training houses, so the final score is measured on houses the process never touched.</p>
+          </div>
+
+          <dl class="specs" data-reveal aria-label="Dataset at a glance">
+            <div class="specs__row"><dt>Houses</dt><dd class="specs__figure">1,460</dd></div>
+            <div class="specs__row"><dt>Columns</dt><dd class="specs__figure">81</dd></div>
+            <div class="specs__row"><dt>Training set</dt><dd class="specs__figure">1,168</dd></div>
+            <div class="specs__row"><dt>Test set</dt><dd class="specs__figure">292</dd></div>
+            <div class="specs__row"><dt>Source</dt><dd>OpenML, <span class="mono">house_prices</span></dd></div>
+          </dl>
+        </div>
+
+        <h3 class="subhead" data-reveal>What the exploration showed</h3>
+        <ul class="findings" role="list" data-reveal-group>
+          <li class="finding" data-reveal>
+            <p class="finding__figure">$181,442 <span class="finding__vs">vs</span> $165,000</p>
+            <h4 class="finding__title">Prices are skewed</h4>
+            <p class="muted">The mean is well above the median: a few expensive houses pull it up, while most sell between $100,000 and $200,000.</p>
+          </li>
+          <li class="finding" data-reveal>
+            <p class="finding__figure">r = 0.79</p>
+            <h4 class="finding__title">Quality and size lead</h4>
+            <p class="muted">Overall quality has the strongest correlation with price, followed by living area (0.70). Some top features track each other, such as garage cars and garage area.</p>
+          </li>
+          <li class="finding" data-reveal>
+            <p class="finding__figure">99.5%</p>
+            <h4 class="finding__title">Blanks often mean “none”</h4>
+            <p class="muted">Across all 1,460 houses, the pool quality column is blank for almost every one, and each of those has a pool area of 0. The same holds for the 81 houses without a garage.</p>
+          </li>
+        </ul>
+        <!-- Charts: drawn by charts.js from the exported JSON; each figure reads fine without it -->
+        <figure class="chart chart--wide" data-chart="price" data-reveal aria-labelledby="fig-price-title">
+          <figcaption class="chart__head">
+            <p class="label">Figure 1 · Training set, 1,168 houses</p>
+            <h3 class="chart__title" id="fig-price-title">How sale prices are spread</h3>
+            <p class="chart__desc" id="fig-price-desc">Houses per price band. Most training houses sold for $100,000 to $200,000, and a long tail of expensive houses pulls the mean ($181,442) above the median ($165,000).</p>
+          </figcaption>
+          <div class="chart__controls" role="group" aria-label="Price scale" hidden>
+            <button type="button" class="chart__toggle" data-scale="raw" aria-pressed="true">Dollars</button>
+            <button type="button" class="chart__toggle" data-scale="log1p" aria-pressed="false">Log scale</button>
+          </div>
+          <div class="chart__plot"><p class="chart__status">The interactive chart appears here when JavaScript is available.</p></div>
+          <p class="chart__live visually-hidden" aria-live="polite"></p>
+          <p class="chart__note chart__note--log">The log scale is an exploratory view only: it makes the price spread more symmetric, but the final model was trained on raw SalePrice, in dollars, not on its log.</p>
+          <details class="chart__data" hidden><summary>Show the data as a table</summary><div class="chart__table"></div></details>
+          <p class="chart__source">Source: notebook 03, training set before outlier removal.</p>
+        </figure>
+
+        <div class="chart-grid">
+          <figure class="chart" data-chart="correlations" data-reveal aria-labelledby="fig-corr-title">
+            <figcaption class="chart__head">
+              <p class="label">Figure 2 · Training set, 1,168 houses</p>
+              <h3 class="chart__title" id="fig-corr-title">Columns most correlated with price</h3>
+              <p class="chart__desc" id="fig-corr-desc">The ten numeric columns with the strongest straight-line relationship to sale price. Overall quality (0.79) and living area (0.70) lead.</p>
+            </figcaption>
+            <div class="chart__plot"><p class="chart__status">The interactive chart appears here when JavaScript is available.</p></div>
+            <p class="chart__live visually-hidden" aria-live="polite"></p>
+            <p class="chart__note">Pearson correlation, calculated on the 1,168-house training split before houses 523 and 1298 were removed. Some pairs measure almost the same thing, such as garage cars and garage area.</p>
+            <details class="chart__data" hidden><summary>Show the data as a table</summary><div class="chart__table"></div></details>
+            <p class="chart__source">Source: notebook 03, training set before outlier removal.</p>
+          </figure>
+
+          <figure class="chart" data-chart="lotArea" data-reveal aria-labelledby="fig-lot-title">
+            <figcaption class="chart__head">
+              <p class="label">Figure 3 · Training set, 1,168 houses</p>
+              <h3 class="chart__title" id="fig-lot-title">Lot sizes and their outliers</h3>
+              <p class="chart__desc" id="fig-lot-desc">A summary view of lot area on a log scale, built from exported summary values rather than every lot, so it is not a full boxplot. The box holds the middle half of lots, from 7,587 to 11,700 sq ft, with the median at 9,600 sq ft; the largest lot is 215,245 sq ft.</p>
+            </figcaption>
+            <div class="chart__plot"><p class="chart__status">The interactive chart appears here when JavaScript is available.</p></div>
+            <p class="chart__live visually-hidden" aria-live="polite"></p>
+            <p class="chart__note">The thin lines end at the boxplot limits, 1.5 times the interquartile range (Q3 − Q1) beyond each quartile: <span data-lot="lower">1,418 sq ft</span> and <span data-lot="upper">17,869 sq ft</span>. <span data-lot="above">53</span> lots lie above the upper limit; the export holds only the five largest, drawn as dots, and the smallest lot, which falls just below the lower limit. Because only summary values were exported, the lines stop at the limits rather than at the furthest lot inside them. These lots were kept in the data.</p>
+            <details class="chart__data" hidden><summary>Show the data as a table</summary><div class="chart__table"></div></details>
+            <p class="chart__source">Source: notebook 03, training set before outlier removal.</p>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 · Cleaning and preprocessing -->
+    <section class="section case-section" id="preparation" aria-labelledby="preparation-title">
+      <div class="container">
+        <header class="section-head" data-reveal>
+          <p class="label">02 · Cleaning and preprocessing</p>
+          <h2 id="preparation-title">Preparing <em>the data</em></h2>
+        </header>
+
+        <div class="case-split">
+          <div class="case-prose stack" data-reveal>
+            <p class="lead">Each cleaning decision was tested before it was kept: the same Linear Regression baseline was scored with 5-fold cross-validation, changing one decision at a time.</p>
+            <p><strong>Two unfinished sales were removed from training.</strong> Houses 523 and 1298 have more than 4,000 sq ft of living area but sold for $184,750 and $160,000, because they were partial sales of houses not yet completed. They were removed from the training set only; the test set was left as it was.</p>
+            <p><strong>The pool area column was dropped.</strong> Only 6 of the 1,168 training houses have a pool, too few to learn a reliable effect. The pool quality column still tells the model whether a house has one. The ID and the garage build year were also left out.</p>
+          </div>
+
+          <div class="table-wrap" data-reveal>
+            <table class="data-table">
+              <caption>Linear Regression baseline, 5-fold cross-validation on the training set</caption>
+              <thead>
+                <tr><th scope="col">Experiment</th><th scope="col" class="num">MAE</th><th scope="col" class="num">R²</th><th scope="col" class="num">Worst fold R²</th></tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">All data</th><td class="num">$20,457</td><td class="num">0.756</td><td class="num">0.647</td></tr>
+                <tr><th scope="row">Drop pool area</th><td class="num">$20,355</td><td class="num">0.786</td><td class="num">0.651</td></tr>
+                <tr><th scope="row">Drop the two houses</th><td class="num">$18,229</td><td class="num">0.716</td><td class="num">−0.011</td></tr>
+                <tr class="is-chosen"><th scope="row">Drop both <span class="tag">kept</span></th><td class="num">$17,207</td><td class="num">0.890</td><td class="num">0.855</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <figure class="chart chart--wide chart--after-split" data-chart="livingArea" data-reveal aria-labelledby="fig-area-title">
+          <figcaption class="chart__head">
+            <p class="label">Figure 4 · Training set, 1,168 houses</p>
+            <h3 class="chart__title" id="fig-area-title">Living area against sale price</h3>
+            <p class="chart__desc" id="fig-area-desc">Each dot is one training house. Price rises with living area, but houses 523 and 1298, the two largest, sold far below that trend; both were partial sales of unfinished houses and were removed from training. House 1182 (4,476 sq ft, $745,000) was kept.</p>
+          </figcaption>
+          <ul class="chart__legend" role="list">
+            <li><span class="swatch swatch--dot" aria-hidden="true"></span>Training house</li>
+            <li><span class="swatch swatch--ring" aria-hidden="true"></span>Removed from training</li>
+          </ul>
+          <div class="chart__plot"><p class="chart__status">The interactive chart appears here when JavaScript is available.</p></div>
+          <p class="chart__live visually-hidden" aria-live="polite"></p>
+          <p class="chart__note">Horizontal: living area above ground (sq ft). Vertical: sale price. With the keyboard, the arrow keys move from the smallest to the largest house; End jumps to house 1298.</p>
+          <details class="chart__data" hidden><summary>Show the data as a table</summary><div class="chart__table"></div></details>
+          <p class="chart__source">Source: notebook 03, training set before outlier removal.</p>
+        </figure>
+
+        <h3 class="subhead" data-reveal>From 77 columns to 240 features</h3>
+        <div class="prep-grid" data-reveal-group>
+          <article class="panel" data-reveal>
+            <p class="label">33 numeric columns</p>
+            <h4>Living area, year built, lot size…</h4>
+            <ol class="prep-steps" role="list">
+              <li>Fill blanks with the training median</li>
+              <li>Standardize to mean 0 and standard deviation 1</li>
+            </ol>
+          </article>
+          <article class="panel" data-reveal>
+            <p class="label">44 categorical columns</p>
+            <h4>Neighborhood, quality grades, house type…</h4>
+            <ol class="prep-steps" role="list">
+              <li>Fill blanks with the category “None”</li>
+              <li>One-hot encode, grouping categories with fewer than 20 houses</li>
+              <li>Ignore categories never seen in training</li>
+            </ol>
+          </article>
+        </div>
+        <p class="muted case-note" data-reveal>The house-type code (MSSubClass) is stored as a number but treated as a category. Not every blank means “none”: for 5 houses the masonry veneer type is blank while the veneer area is above 0.</p>
+
+        <figure class="chart chart--wide" data-chart="missing" data-reveal aria-labelledby="fig-missing-title">
+          <figcaption class="chart__head">
+            <p class="label">Figure 5 · All 1,460 houses</p>
+            <h3 class="chart__title" id="fig-missing-title">Where the blanks are, and what they mean</h3>
+            <p class="chart__desc" id="fig-missing-desc">Share of houses with a blank value, for the 19 columns that have any. Pool quality is blank for 99.5% of houses; the electrical system for just one.</p>
+          </figcaption>
+          <ul class="chart__legend" role="list">
+            <li><span class="swatch" aria-hidden="true"></span>Blank means the feature is absent: a related size or count column is 0 for every blank</li>
+            <li><span class="swatch swatch--outline" aria-hidden="true"></span>Not confirmed: the related column is not always 0, or there is none to check</li>
+          </ul>
+          <div class="chart__plot"><p class="chart__status">The interactive chart appears here when JavaScript is available.</p></div>
+          <p class="chart__live visually-hidden" aria-live="polite"></p>
+          <p class="chart__note">Pool, fireplace, garage and most basement blanks match a 0 in the related column. Masonry veneer type does not: 5 blank houses have a veneer area above 0 and 8 have a blank area too. One house with a basement has blank basement exposure and finish type.</p>
+          <details class="chart__data" hidden><summary>Show the data as a table</summary><div class="chart__table"></div></details>
+          <p class="chart__source">Source: notebook 02, whole dataset (1460 houses).</p>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 03 · CatBoost pipeline -->
+    <section class="section case-section" id="model" aria-labelledby="model-title">
+      <div class="container">
+        <header class="section-head" data-reveal>
+          <p class="label">03 · Model pipeline</p>
+          <h2 id="model-title">The CatBoost <em>pipeline</em></h2>
+        </header>
+
+        <ol class="flow" role="list" aria-label="How one house becomes a price" data-reveal-group>
+          <li class="flow__step" data-reveal>
+            <span class="flow__num" aria-hidden="true">01</span>
+            <p class="flow__figure">81</p>
+            <h3 class="flow__title">Sale record</h3>
+            <p class="muted">Every column for one house.</p>
+          </li>
+          <li class="flow__step" data-reveal>
+            <span class="flow__num" aria-hidden="true">02</span>
+            <p class="flow__figure">77</p>
+            <h3 class="flow__title">Model inputs</h3>
+            <p class="muted">Price, ID, garage year and pool area removed.</p>
+          </li>
+          <li class="flow__step" data-reveal>
+            <span class="flow__num" aria-hidden="true">03</span>
+            <p class="flow__figure">240</p>
+            <h3 class="flow__title">Features</h3>
+            <p class="muted">Filled, scaled and one-hot encoded.</p>
+          </li>
+          <li class="flow__step" data-reveal>
+            <span class="flow__num" aria-hidden="true">04</span>
+            <p class="flow__figure">1,000</p>
+            <h3 class="flow__title">CatBoost trees</h3>
+            <p class="muted">Depth 6, learning rate 0.042, chosen automatically.</p>
+          </li>
+          <li class="flow__step" data-reveal>
+            <span class="flow__num" aria-hidden="true">05</span>
+            <p class="flow__figure">$</p>
+            <h3 class="flow__title">Predicted price</h3>
+            <p class="muted">The sale price in dollars.</p>
+          </li>
+        </ol>
+
+        <div class="case-split">
+          <div class="case-prose stack" data-reveal>
+            <p class="lead">Six models were compared on the 1,166 cleaned training houses, with the same preprocessing, the same 5-fold split and the settings chosen during tuning.</p>
+            <p>CatBoost, LightGBM and XGBoost finished effectively tied: their average errors are within $343 of each other, less than their fold-to-fold spread. CatBoost had the lowest average error, and a grid search did not beat its default settings.</p>
+            <p>A stack of the three boosters was $93 better, a fifth of its own spread, so the simpler single model was kept. The model predicts the price in dollars directly; the log transform suggested during exploration was not used.</p>
+          </div>
+
+          <div class="table-wrap" data-reveal>
+            <table class="data-table">
+              <caption>5-fold cross-validation on the training set; spread is the standard deviation of the fold MAEs</caption>
+              <thead>
+                <tr><th scope="col">Model</th><th scope="col" class="num">MAE</th><th scope="col" class="num">Spread</th><th scope="col" class="num">R²</th></tr>
+              </thead>
+              <tbody>
+                <tr class="is-chosen"><th scope="row">CatBoost <span class="tag">chosen</span></th><td class="num">$14,438</td><td class="num">$854</td><td class="num">0.908</td></tr>
+                <tr><th scope="row">LightGBM</th><td class="num">$14,699</td><td class="num">$893</td><td class="num">0.908</td></tr>
+                <tr><th scope="row">XGBoost</th><td class="num">$14,781</td><td class="num">$328</td><td class="num">0.910</td></tr>
+                <tr><th scope="row">Gradient Boosting</th><td class="num">$15,227</td><td class="num">$780</td><td class="num">0.904</td></tr>
+                <tr><th scope="row">Random Forest</th><td class="num">$16,583</td><td class="num">$1,416</td><td class="num">0.883</td></tr>
+                <tr><th scope="row">Linear Regression</th><td class="num">$17,207</td><td class="num">$613</td><td class="num">0.890</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 · Evaluation -->
+    <section class="section case-section" id="evaluation" aria-labelledby="evaluation-title">
+      <div class="container">
+        <header class="section-head" data-reveal>
+          <p class="label">04 · Model evaluation</p>
+          <h2 id="evaluation-title">Measured on <em>unseen houses</em></h2>
+        </header>
+
+        <div class="case-split">
+          <div class="case-prose stack" data-reveal>
+            <p class="lead">The 292 test houses were scored once, after every choice had been made. Both models were trained on the same 1,166 houses with the same preprocessing.</p>
+            <p>CatBoost’s average error is about 16% lower than the Linear Regression baseline’s, the same gap seen in cross-validation. The test error is $584 higher than the cross-validation error, within the fold-to-fold spread: the settings were chosen on those folds, so the cross-validation scores were slightly optimistic.</p>
+          </div>
+
+          <div class="table-wrap" data-reveal>
+            <table class="data-table">
+              <caption>Test set, 292 houses, scored once</caption>
+              <thead>
+                <tr><th scope="col">Model</th><th scope="col" class="num">MAE</th><th scope="col" class="num">RMSE</th><th scope="col" class="num">R²</th></tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">Linear Regression</th><td class="num">$17,826</td><td class="num">$27,946</td><td class="num">0.898</td></tr>
+                <tr class="is-chosen"><th scope="row">CatBoost <span class="tag">final</span></th><td class="num">$15,022</td><td class="num">$24,407</td><td class="num">0.922</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <h3 class="subhead" data-reveal>What the errors look like</h3>
+        <ul class="findings" role="list" data-reveal-group>
+          <li class="finding" data-reveal>
+            <p class="finding__figure">$9,343</p>
+            <h4 class="finding__title">Median error</h4>
+            <p class="muted">Half of the test houses are predicted closer than this. A few large misses pull the mean up to $15,022.</p>
+          </li>
+          <li class="finding" data-reveal>
+            <p class="finding__figure">52%</p>
+            <h4 class="finding__title">Within $10,000</h4>
+            <p class="muted">Share of test houses whose prediction is within $10,000 of the actual sale price; 77% are within $20,000.</p>
+          </li>
+          <li class="finding" data-reveal>
+            <p class="finding__figure">+$11,163</p>
+            <h4 class="finding__title">Quality matters most</h4>
+            <p class="muted">Shuffling overall quality raises the average error by this much, and living area by $8,154. No other column adds more than $2,000.</p>
+          </li>
+        </ul>
+        <!-- Charts: drawn by charts.js from the saved model's exported predictions -->
+        <div class="tolerance" data-tolerance data-reveal hidden>
+          <div class="tolerance__head">
+            <label class="label" for="tolerance-input">Error tolerance</label>
+            <output class="tolerance__output" id="tolerance-output" for="tolerance-input" aria-live="polite"></output>
+          </div>
+          <input class="tolerance__input" id="tolerance-input" type="range" min="1000" max="50000" step="1000" value="10000" aria-describedby="tolerance-output tolerance-help">
+          <p class="muted tolerance__help" id="tolerance-help">Drag or use the arrow keys to change the dollar threshold. The share is counted in your browser from the 292 exported predictions and updates figures 6 and 7.</p>
+        </div>
+
+        <div class="chart-grid">
+          <figure class="chart" data-chart="actualPredicted" data-reveal aria-labelledby="fig-ap-title">
+            <figcaption class="chart__head">
+              <p class="label">Figure 6 · Test set, 292 houses</p>
+              <h3 class="chart__title" id="fig-ap-title">Actual against predicted prices</h3>
+              <p class="chart__desc" id="fig-ap-desc">Each dot is one test house. Dots on the diagonal line (y = x) were predicted exactly; above it the model guessed too high, below it too low. The shaded band shows the selected tolerance.</p>
+            </figcaption>
+            <ul class="chart__legend" role="list">
+              <li><span class="swatch swatch--dot" aria-hidden="true"></span>Within the tolerance</li>
+              <li><span class="swatch swatch--dot swatch--muted" aria-hidden="true"></span>Outside it</li>
+            </ul>
+            <div class="chart__plot"><p class="chart__status">The interactive chart appears here when JavaScript is available.</p></div>
+            <p class="chart__live visually-hidden" aria-live="polite"></p>
+            <p class="chart__note">Horizontal: actual sale price. Vertical: predicted price. These are the saved model’s predictions; nothing is trained in the browser.</p>
+            <details class="chart__data" hidden><summary>Show the data as a table</summary><div class="chart__table"></div></details>
+            <p class="chart__source">Source: saved model predictions on the 292 test houses.</p>
+          </figure>
+
+          <figure class="chart" data-chart="errors" data-reveal aria-labelledby="fig-err-title">
+            <figcaption class="chart__head">
+              <p class="label">Figure 7 · Test set, 292 houses</p>
+              <h3 class="chart__title" id="fig-err-title">How large the errors are</h3>
+              <p class="chart__desc" id="fig-err-desc">Test houses per $10,000 band of error, where error is the predicted price minus the actual price. Most errors sit close to zero; the median error is $9,343, while a few large misses lift the mean to $15,022.</p>
+            </figcaption>
+            <ul class="chart__legend" role="list">
+              <li><span class="swatch" aria-hidden="true"></span>Band inside the tolerance</li>
+              <li><span class="swatch swatch--muted" aria-hidden="true"></span>Outside it</li>
+            </ul>
+            <div class="chart__plot"><p class="chart__status">The interactive chart appears here when JavaScript is available.</p></div>
+            <p class="chart__live visually-hidden" aria-live="polite"></p>
+            <p class="chart__note">Left of zero the model predicted below the sale price, right of zero above it.</p>
+            <details class="chart__data" hidden><summary>Show the data as a table</summary><div class="chart__table"></div></details>
+            <p class="chart__source">Source: saved model predictions on the 292 test houses.</p>
+          </figure>
+        </div>
+
+        <div class="chart-grid">
+          <figure class="chart" data-chart="comparison" data-reveal aria-labelledby="fig-cmp-title">
+            <figcaption class="chart__head">
+              <p class="label">Figure 8 · Test set, 292 houses</p>
+              <h3 class="chart__title" id="fig-cmp-title">CatBoost against the baseline</h3>
+              <p class="chart__desc" id="fig-cmp-desc">The three test metrics for the final CatBoost model and the Linear Regression baseline, both trained on the same 1,166 houses.</p>
+            </figcaption>
+            <div class="chart__plot"><p class="chart__status">The interactive chart appears here when JavaScript is available.</p></div>
+            <p class="chart__live visually-hidden" aria-live="polite"></p>
+            <p class="chart__note">CatBoost values were recomputed from the saved model; the baseline values are the recorded notebook output, since recomputing them would mean training a model.</p>
+            <details class="chart__data" hidden><summary>Show the data as a table</summary><div class="chart__table"></div></details>
+            <p class="chart__source">Source: notebook 09 cells 7 and 8.</p>
+          </figure>
+
+          <figure class="chart" data-chart="importance" data-reveal aria-labelledby="fig-imp-title">
+            <figcaption class="chart__head">
+              <p class="label">Figure 9 · Test set, 292 houses</p>
+              <h3 class="chart__title" id="fig-imp-title">What the model relies on</h3>
+              <p class="chart__desc" id="fig-imp-desc">How much the average test error rises when one column is shuffled. Overall quality and living area matter far more than anything else.</p>
+            </figcaption>
+            <div class="chart__plot"><p class="chart__status">The interactive chart appears here when JavaScript is available.</p></div>
+            <p class="chart__live visually-hidden" aria-live="polite"></p>
+            <p class="chart__note">Whiskers show ± one standard deviation across 10 shuffles. With only 292 test houses, small values, under about $1,000, may be noise. Importance shows reliance, not cause.</p>
+            <details class="chart__data" hidden><summary>Show the data as a table</summary><div class="chart__table"></div></details>
+            <p class="chart__source">Source: permutation importance on the test set, notebook 09.</p>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 · Limitations and takeaways -->
+    <section class="section case-section" id="takeaways" aria-labelledby="takeaways-title">
+      <div class="container">
+        <header class="section-head" data-reveal>
+          <p class="label">05 · Limitations and key takeaways</p>
+          <h2 id="takeaways-title">What the model <em>can and can’t</em> say</h2>
+        </header>
+
+        <div class="case-split case-split--even">
+          <div data-reveal>
+            <h3 class="subhead subhead--flush">Limitations</h3>
+            <ul class="limits" role="list">
+              <li>One city and five years of sales: the model has not been tested on houses outside Ames or after 2010.</li>
+              <li>The test set has 292 houses and was scored once, so the result carries real uncertainty; no confidence interval was computed.</li>
+              <li>Importance shows what the model relies on, not what causes a higher price. With only 292 test houses, values under about $1,000 may be noise and should not be ranked against each other.</li>
+              <li>The two large unfinished sales were removed from training, so the model has not learned from houses like them.</li>
+              <li>A local Streamlit app lets the price be explored for 10 of the 77 inputs; it is not published online.</li>
+            </ul>
+          </div>
+
+          <aside class="panel panel--raised" data-reveal aria-labelledby="takeaways-list-title">
+            <p class="label">Key takeaways</p>
+            <h3 id="takeaways-list-title" class="panel__title">Three things this project showed</h3>
+            <ol class="takeaways" role="list">
+              <li><strong>Testing cleaning decisions pays off.</strong> Two small changes lifted the baseline’s R² from 0.756 to 0.890 and fixed its worst fold.</li>
+              <li><strong>A strong baseline keeps results honest.</strong> Linear Regression was hard to beat, and CatBoost’s 16% gain is measured against it.</li>
+              <li><strong>Simpler won a tie.</strong> When the top models were within their own noise, the single default CatBoost model was kept over a stack.</li>
+            </ol>
+          </aside>
+        </div>
+
+        <div class="case-end" data-reveal>
+          <a class="button" href="https://github.com/mokhivibes/house-price-prediction" rel="noopener">View repository <span aria-hidden="true">↗</span></a>
+          <a class="button button--secondary" href="index.html#projects">Back to all projects</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <p><span class="wordmark wordmark--small">Mokhichekhra</span> <span class="muted">· Machine learning portfolio</span></p>
+      <p><a href="https://github.com/mokhivibes" rel="noopener">github.com/mokhivibes <span aria-hidden="true">↗</span></a></p>
+    </div>
+  </footer>
+</body>
+</html>
